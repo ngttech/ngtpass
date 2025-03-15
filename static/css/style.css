@@ -31,14 +31,14 @@ header {
 /* Logo styles */
 .logo-container {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    flex-wrap: wrap;
-    gap: 15px;
+    gap: 10px;
 }
 
 .company-logo {
-    height: 60px;
+    height: 80px;
     width: auto;
     object-fit: contain;
 }
@@ -71,9 +71,10 @@ header {
 }
 
 .tagline {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     color: #666;
     margin-top: 5px;
+    text-align: center;
 }
 
 /* Password Display */
@@ -272,7 +273,12 @@ header {
 }
 
 .info-box li {
-    margin-bottom: 8px;
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.info-box li strong {
+    color: #292a27; /* Dark gray */
 }
 
 /* Footer */
