@@ -12,14 +12,14 @@ WORDS = [
     "dino", "dragon", "pirate", "ninja", "wizard", "fairy", "unicorn", "mermaid"
 ]
 
-def generate_strong_password():
+def generate_strong_password(min_length=8):
     """Generate a stronger password with words, numbers, and special characters"""
     word = random.choice(WORDS)
     
     # Apply random capitalization to the word
     word = ''.join(c.upper() if random.choice([True, False]) else c for c in word)
     
-    # Get additional word but shorter
+    # Get additional word
     second_word = random.choice(WORDS)
     second_word = second_word.capitalize() if random.choice([True, False]) else second_word
     
@@ -33,19 +33,24 @@ def generate_strong_password():
     # Decide where to place the special character
     special_pos = random.randint(0, 3)
     
+    # Create password with full second word instead of truncated version
     if special_pos == 0:
-        return f"{special}{word}{numbers}{second_word[:3]}"
+        return f"{special}{word}{numbers}{second_word}"
     elif special_pos == 1:
-        return f"{word}{special}{numbers}{second_word[:3]}"
+        return f"{word}{special}{numbers}{second_word}"
     elif special_pos == 2:
-        return f"{word}{numbers}{special}{second_word[:3]}"
+        return f"{word}{numbers}{special}{second_word}"
     else:
-        return f"{word}{numbers}{second_word[:3]}{special}"
+        return f"{word}{numbers}{second_word}{special}"
 
-def generate_passphrase():
-    """Generate a memorable passphrase with 3-4 random words and a number"""
-    # Select 3-4 random words
-    num_words = random.randint(3, 4)
+def generate_passphrase(num_words=3, separator="-"):
+    """Generate a memorable passphrase with multiple random words and a number
+    
+    Args:
+        num_words (int): Number of words to include (default: 3)
+        separator (str): Character to separate words ("-", ".", or "_")
+    """
+    # Select the specified number of words
     words = random.sample(WORDS, num_words)
     
     # Capitalize the first letter of each word
@@ -54,5 +59,5 @@ def generate_passphrase():
     # Add a random number between 1-100
     number = random.randint(1, 100)
     
-    # Join the words with hyphens and add the number at the end
-    return f"{'-'.join(words)}{number}" 
+    # Join the words with the specified separator and add the number at the end
+    return f"{separator.join(words)}{number}" 

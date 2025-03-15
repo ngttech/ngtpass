@@ -1,29 +1,35 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // DOM elements
+    // DOM Elements
     const passwordResult = document.getElementById('password-result');
     const copyButton = document.getElementById('copy-button');
     const strongBtn = document.getElementById('strong-btn');
     const passphraseBtn = document.getElementById('passphrase-btn');
     
-    // Initialize variables
-    let currentPassword = '';
+    // Configuration elements
+    const strongMinLength = document.getElementById('strong-min-length');
+    const strongMinLengthValue = document.getElementById('strong-min-length-value');
+    const passphraseWords = document.getElementById('passphrase-words');
+    const passphraseWordsValue = document.getElementById('passphrase-words-value');
+    const separatorRadios = document.querySelectorAll('input[name="separator"]');
     
-    // Generate strong password
+    // Update display values when sliders change
+    strongMinLength.addEventListener('input', function() {
+        strongMinLengthValue.textContent = this.value;
+    });
+    
+    passphraseWords.addEventListener('input', function() {
+        passphraseWordsValue.textContent = this.value;
+    });
+    
+    // Generate Strong Password
     strongBtn.addEventListener('click', function() {
-        // Show loading state
-        passwordResult.textContent = 'Generating...';
+        const minLength = strongMinLength.value;
         
-        // Fetch strong password from API
-        fetch('/generate/strong')
+        fetch(`/strong_password?min_length=${minLength}`)
             .then(response => response.json())
             .then(data => {
-                currentPassword = data.password;
-                passwordResult.textContent = currentPassword;
-                
-                // Add some visual feedback
-                passwordResult.style.animation = 'none';
-                void passwordResult.offsetWidth; // Trigger reflow
-                passwordResult.style.animation = 'pulse 0.5s';
+                passwordResult.textContent = data.password;
+                animatePasswordDisplay();
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -31,22 +37,24 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     });
     
-    // Generate passphrase
+    // Generate Passphrase
     passphraseBtn.addEventListener('click', function() {
-        // Show loading state
-        passwordResult.textContent = 'Generating...';
+        const numWords = passphraseWords.value;
+        let separator = '-'; // Default
         
-        // Fetch passphrase from API
-        fetch('/generate/passphrase')
+        // Get selected separator
+        for (const radio of separatorRadios) {
+            if (radio.checked) {
+                separator = radio.value;
+                break;
+            }
+        }
+        
+        fetch(`/passphrase?num_words=${numWords}&separator=${separator}`)
             .then(response => response.json())
             .then(data => {
-                currentPassword = data.password;
-                passwordResult.textContent = currentPassword;
-                
-                // Add some visual feedback
-                passwordResult.style.animation = 'none';
-                void passwordResult.offsetWidth; // Trigger reflow
-                passwordResult.style.animation = 'pulse 0.5s';
+                passwordResult.textContent = data.passphrase;
+                animatePasswordDisplay();
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -54,27 +62,42 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     });
     
-    // Copy password to clipboard
+    // Copy to clipboard functionality
     copyButton.addEventListener('click', function() {
-        if (currentPassword) {
-            navigator.clipboard.writeText(currentPassword)
-                .then(() => {
-                    // Visual feedback for successful copy
-                    const originalText = copyButton.querySelector('.copy-text').textContent;
-                    copyButton.querySelector('.copy-text').textContent = 'Copied!';
-                    copyButton.style.backgroundColor = '#4CAF50';
-                    
-                    // Reset after 2 seconds
-                    setTimeout(() => {
-                        copyButton.querySelector('.copy-text').textContent = originalText;
-                        copyButton.style.backgroundColor = '#292a27'; // Updated to match the dark gray color
-                    }, 2000);
-                })
-                .catch(err => {
-                    console.error('Error copying text: ', err);
-                });
+        const textToCopy = passwordResult.textContent;
+        
+        // Don't copy the default message
+        if (textToCopy === 'Click a button to generate a password!') {
+            return;
         }
+        
+        // Use the Clipboard API
+        navigator.clipboard.writeText(textToCopy)
+            .then(() => {
+                // Visual feedback
+                const originalText = copyButton.querySelector('.copy-text').textContent;
+                copyButton.querySelector('.copy-text').textContent = 'Copied!';
+                copyButton.classList.add('copied');
+                
+                // Reset after 2 seconds
+                setTimeout(() => {
+                    copyButton.querySelector('.copy-text').textContent = originalText;
+                    copyButton.classList.remove('copied');
+                }, 2000);
+            })
+            .catch(err => {
+                console.error('Failed to copy: ', err);
+                alert('Failed to copy to clipboard. Please try again.');
+            });
     });
+    
+    // Animation for password display
+    function animatePasswordDisplay() {
+        passwordResult.style.animation = 'none';
+        // Trigger reflow
+        void passwordResult.offsetWidth;
+        passwordResult.style.animation = 'pulse 0.5s';
+    }
     
     // Add a special pulse animation to the CSS
     const style = document.createElement('style');

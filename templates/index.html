@@ -39,7 +39,15 @@
                 <div class="option-card strong">
                     <h2>Strong Password</h2>
                     <p>Secure and memorable! Uses words, numbers, and special characters.</p>
-                    <p class="example">Example: rOcket5!Dog</p>
+                    <p class="example">Example: rOcket5!Dragon</p>
+                    
+                    <div class="config-options">
+                        <div class="config-item">
+                            <label for="strong-min-length">Minimum Length: <span id="strong-min-length-value">8</span></label>
+                            <input type="range" id="strong-min-length" min="6" max="16" value="8" class="slider">
+                        </div>
+                    </div>
+                    
                     <button id="strong-btn" class="generate-btn">Generate Password</button>
                 </div>
                 
@@ -47,6 +55,29 @@
                     <h2>Passphrase</h2>
                     <p>Easy to remember! Multiple words with a number.</p>
                     <p class="example">Example: Dragon-Turtle-Star42</p>
+                    
+                    <div class="config-options">
+                        <div class="config-item">
+                            <label for="passphrase-words">Number of Words: <span id="passphrase-words-value">3</span></label>
+                            <input type="range" id="passphrase-words" min="2" max="5" value="3" class="slider">
+                        </div>
+                        
+                        <div class="config-item separator-options">
+                            <label>Word Separator:</label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="separator" value="-" checked> Dash (-)
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="separator" value="."> Dot (.)
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="separator" value="_"> Underscore (_)
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <button id="passphrase-btn" class="generate-btn">Generate Passphrase</button>
                 </div>
             </div>
