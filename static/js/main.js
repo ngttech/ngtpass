@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const passwordResult = document.getElementById('password-result');
     const copyButton = document.getElementById('copy-button');
     const strongBtn = document.getElementById('strong-btn');
+    const passphraseBtn = document.getElementById('passphrase-btn');
     
     // Initialize variables
     let currentPassword = '';
@@ -14,6 +15,29 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Fetch strong password from API
         fetch('/generate/strong')
+            .then(response => response.json())
+            .then(data => {
+                currentPassword = data.password;
+                passwordResult.textContent = currentPassword;
+                
+                // Add some visual feedback
+                passwordResult.style.animation = 'none';
+                void passwordResult.offsetWidth; // Trigger reflow
+                passwordResult.style.animation = 'pulse 0.5s';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                passwordResult.textContent = 'Oops! Something went wrong.';
+            });
+    });
+    
+    // Generate passphrase
+    passphraseBtn.addEventListener('click', function() {
+        // Show loading state
+        passwordResult.textContent = 'Generating...';
+        
+        // Fetch passphrase from API
+        fetch('/generate/passphrase')
             .then(response => response.json())
             .then(data => {
                 currentPassword = data.password;

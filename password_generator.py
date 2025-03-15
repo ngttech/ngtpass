@@ -40,4 +40,19 @@ def generate_strong_password():
     elif special_pos == 2:
         return f"{word}{numbers}{special}{second_word[:3]}"
     else:
-        return f"{word}{numbers}{second_word[:3]}{special}" 
+        return f"{word}{numbers}{second_word[:3]}{special}"
+
+def generate_passphrase():
+    """Generate a memorable passphrase with 3-4 random words and a number"""
+    # Select 3-4 random words
+    num_words = random.randint(3, 4)
+    words = random.sample(WORDS, num_words)
+    
+    # Capitalize the first letter of each word
+    words = [word.capitalize() for word in words]
+    
+    # Add a random number between 1-100
+    number = random.randint(1, 100)
+    
+    # Join the words with hyphens and add the number at the end
+    return f"{'-'.join(words)}{number}" 
