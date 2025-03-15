@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NGT Pass - Kid-Friendly Password Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <h1>NGT<span>Pass</span></h1>
+                <div class="tagline">Fun passwords that are easy to remember!</div>
+            </div>
+        </header>
+        
+        <main>
+            <div class="password-display">
+                <div id="password-result">Click a button to generate a password!</div>
+                <button id="copy-button" title="Copy to clipboard">
+                    <span class="copy-icon">📋</span>
+                    <span class="copy-text">Copy</span>
+                </button>
+            </div>
+            
+            <div class="options">
+                <div class="option-card simple">
+                    <h2>Simple Password</h2>
+                    <p>Easy to remember! Uses words and numbers.</p>
+                    <p class="example">Example: Turtle123</p>
+                    <button id="simple-btn" class="generate-btn">Generate Simple</button>
+                </div>
+                
+                <div class="option-card strong">
+                    <h2>Strong Password</h2>
+                    <p>More secure! Adds special characters.</p>
+                    <p class="example">Example: rOcket5!Dog</p>
+                    <button id="strong-btn" class="generate-btn">Generate Strong</button>
+                </div>
+            </div>
+            
+            <div class="info-box">
+                <h3>😊 Password Tips for Kids</h3>
+                <ul>
+                    <li>Never share your password with anyone except your parents or teachers</li>
+                    <li>Use different passwords for different websites</li>
+                    <li>Write down your password in a secret notebook if you need help remembering it</li>
+                </ul>
+            </div>
+        </main>
+        
+        <footer>
+            <p>Created by NGT Technology 🚀 - Passwords are generated right in your browser and never stored!</p>
+        </footer>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html> 
