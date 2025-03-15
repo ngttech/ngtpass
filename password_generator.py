@@ -12,6 +12,30 @@ WORDS = [
     "dino", "dragon", "pirate", "ninja", "wizard", "fairy", "unicorn", "mermaid"
 ]
 
+# Letter to symbol/number substitutions
+SUBSTITUTIONS = {
+    'a': '@',
+    'e': '3',
+    'i': '!',
+    'o': '0',
+    's': '$',
+    't': '7',
+    'l': '1'
+}
+
+def apply_substitutions(word, probability=0.3):
+    """Apply letter-to-symbol/number substitutions with a certain probability"""
+    result = ""
+    for char in word:
+        lower_char = char.lower()
+        # Only substitute lowercase letters that are in our substitution map
+        # and only with a certain probability to keep readability
+        if lower_char in SUBSTITUTIONS and random.random() < probability:
+            result += SUBSTITUTIONS[lower_char]
+        else:
+            result += char
+    return result
+
 def generate_strong_password(min_length=8):
     """Generate a stronger password with words, numbers, and special characters"""
     # Keep generating until we meet the minimum length
@@ -27,6 +51,9 @@ def generate_strong_password(min_length=8):
         # Apply random capitalization to the word
         word = ''.join(c.upper() if random.choice([True, False]) else c for c in word)
         
+        # Apply letter substitutions
+        word = apply_substitutions(word)
+        
         # Get additional word
         second_word_pool = [w for w in WORDS if len(w) >= min(5, min_length // 3)]
         if not second_word_pool:
@@ -35,7 +62,10 @@ def generate_strong_password(min_length=8):
         second_word = random.choice(second_word_pool)
         second_word = second_word.capitalize() if random.choice([True, False]) else second_word
         
-        # Get numbers - more digits for longer passwords
+        # Apply letter substitutions to second word
+        second_word = apply_substitutions(second_word)
+        
+        # Get numbers - limit to at most 3 digits as per requirements
         num_digits = random.randint(1, min(3, min_length // 5))
         numbers = ''.join(random.choices(string.digits, k=num_digits))
         
@@ -43,17 +73,15 @@ def generate_strong_password(min_length=8):
         special_chars = '!@#$%^&*'
         special = random.choice(special_chars)
         
-        # Decide where to place the special character
-        special_pos = random.randint(0, 3)
+        # Decide where to place the special character (never at the start)
+        special_pos = random.randint(1, 3)
         
         # Create password with full second word instead of truncated version
-        if special_pos == 0:
-            password = f"{special}{word}{numbers}{second_word}"
-        elif special_pos == 1:
+        if special_pos == 1:
             password = f"{word}{special}{numbers}{second_word}"
         elif special_pos == 2:
             password = f"{word}{numbers}{special}{second_word}"
-        else:
+        else:  # special_pos == 3
             password = f"{word}{numbers}{second_word}{special}"
     
     return password
@@ -70,6 +98,12 @@ def generate_passphrase(num_words=3, separator="-"):
     
     # Capitalize the first letter of each word
     words = [word.capitalize() for word in words]
+    
+    # Apply letter substitutions to some words (but not all to maintain readability)
+    if num_words > 2:
+        # Apply substitutions to a random word
+        random_word_index = random.randint(0, num_words - 1)
+        words[random_word_index] = apply_substitutions(words[random_word_index], probability=0.4)
     
     # Add a random number between 1-100
     number = random.randint(1, 100)
