@@ -71,25 +71,63 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
+        // Fallback for older browsers
+        if (!navigator.clipboard) {
+            fallbackCopyTextToClipboard(textToCopy);
+            return;
+        }
+        
         // Use the Clipboard API
         navigator.clipboard.writeText(textToCopy)
             .then(() => {
-                // Visual feedback
-                const originalText = copyButton.querySelector('.copy-text').textContent;
-                copyButton.querySelector('.copy-text').textContent = 'Copied!';
-                copyButton.classList.add('copied');
-                
-                // Reset after 2 seconds
-                setTimeout(() => {
-                    copyButton.querySelector('.copy-text').textContent = originalText;
-                    copyButton.classList.remove('copied');
-                }, 2000);
+                showCopiedFeedback();
             })
             .catch(err => {
                 console.error('Failed to copy: ', err);
-                alert('Failed to copy to clipboard. Please try again.');
+                fallbackCopyTextToClipboard(textToCopy);
             });
     });
+    
+    // Fallback copy method for browsers that don't support clipboard API
+    function fallbackCopyTextToClipboard(text) {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        
+        // Make the textarea out of viewport
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        textArea.style.top = "-999999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        
+        try {
+            const successful = document.execCommand('copy');
+            if (successful) {
+                showCopiedFeedback();
+            } else {
+                alert('Unable to copy to clipboard');
+            }
+        } catch (err) {
+            console.error('Fallback: Oops, unable to copy', err);
+            alert('Unable to copy to clipboard: ' + err);
+        }
+        
+        document.body.removeChild(textArea);
+    }
+    
+    // Show visual feedback when copied
+    function showCopiedFeedback() {
+        const originalText = copyButton.querySelector('.copy-text').textContent;
+        copyButton.querySelector('.copy-text').textContent = 'Copied!';
+        copyButton.classList.add('copied');
+        
+        // Reset after 2 seconds
+        setTimeout(() => {
+            copyButton.querySelector('.copy-text').textContent = originalText;
+            copyButton.classList.remove('copied');
+        }, 2000);
+    }
     
     // Animation for password display
     function animatePasswordDisplay() {

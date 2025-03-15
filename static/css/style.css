@@ -115,7 +115,7 @@ header {
 }
 
 #copy-button.copied {
-    background-color: #4CAF50;
+    background-color: #eb5e24; /* Orange */
 }
 
 .copy-icon {
@@ -168,7 +168,7 @@ header {
 }
 
 .generate-btn {
-    background-color: #4CAF50;
+    background-color: #eb5e24; /* Orange */
     color: white;
     border: none;
     border-radius: 25px;
@@ -178,6 +178,11 @@ header {
     cursor: pointer;
     transition: background-color 0.3s, transform 0.2s;
     margin-top: 15px;
+}
+
+.generate-btn:hover {
+    background-color: #d04e18; /* Slightly darker orange */
+    transform: scale(1.05);
 }
 
 /* New styles for configuration options */
@@ -213,7 +218,7 @@ header {
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: #4CAF50;
+    background: #eb5e24; /* Orange */
     cursor: pointer;
 }
 
@@ -221,7 +226,7 @@ header {
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: #4CAF50;
+    background: #eb5e24; /* Orange */
     cursor: pointer;
 }
 
