@@ -2,34 +2,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // DOM elements
     const passwordResult = document.getElementById('password-result');
     const copyButton = document.getElementById('copy-button');
-    const simpleBtn = document.getElementById('simple-btn');
     const strongBtn = document.getElementById('strong-btn');
     
     // Initialize variables
     let currentPassword = '';
-    
-    // Generate simple password
-    simpleBtn.addEventListener('click', function() {
-        // Show loading state
-        passwordResult.textContent = 'Generating...';
-        
-        // Fetch simple password from API
-        fetch('/generate/simple')
-            .then(response => response.json())
-            .then(data => {
-                currentPassword = data.password;
-                passwordResult.textContent = currentPassword;
-                
-                // Add some visual feedback
-                passwordResult.style.animation = 'none';
-                void passwordResult.offsetWidth; // Trigger reflow
-                passwordResult.style.animation = 'pulse 0.5s';
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                passwordResult.textContent = 'Oops! Something went wrong.';
-            });
-    });
     
     // Generate strong password
     strongBtn.addEventListener('click', function() {
@@ -67,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Reset after 2 seconds
                     setTimeout(() => {
                         copyButton.querySelector('.copy-text').textContent = originalText;
-                        copyButton.style.backgroundColor = '#4a6baf';
+                        copyButton.style.backgroundColor = '#292a27'; // Updated to match the dark gray color
                     }, 2000);
                 })
                 .catch(err => {
@@ -109,4 +85,9 @@ document.addEventListener('DOMContentLoaded', function() {
             card.style.transform = 'translateY(0)';
         });
     });
+    
+    // Auto-generate a password when the page loads
+    setTimeout(() => {
+        strongBtn.click();
+    }, 500);
 }); 

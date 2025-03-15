@@ -3,14 +3,11 @@ version: '3'
 services:
   ngtpass:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: https://github.com/ngttech/ngtpass.git
+      args:
+        - BUILDKIT_INLINE_CACHE=0
     container_name: ngtpass
     ports:
       - "5000:5000"
     restart: unless-stopped
-    volumes:
-      - ./app.py:/app/app.py
-      - ./password_generator.py:/app/password_generator.py
-      - ./static:/app/static
-      - ./templates:/app/templates 
+    # Removing the problematic volume mounts 

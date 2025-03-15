@@ -1,7 +1,7 @@
 import random
 import string
 
-# Simple word list for kid-friendly passwords
+# Word list for kid-friendly passwords
 WORDS = [
     "apple", "banana", "orange", "grape", "pear", "kiwi", "lemon", "melon",
     "dog", "cat", "bird", "fish", "mouse", "rabbit", "turtle", "horse",
@@ -11,17 +11,6 @@ WORDS = [
     "robot", "rocket", "planet", "space", "ocean", "river", "mountain", "forest",
     "dino", "dragon", "pirate", "ninja", "wizard", "fairy", "unicorn", "mermaid"
 ]
-
-def generate_simple_password():
-    """Generate a simple password with a word and numbers"""
-    word = random.choice(WORDS)
-    numbers = ''.join(random.choices(string.digits, k=random.randint(2, 4)))
-    
-    # Randomly decide if the word should be capitalized
-    if random.choice([True, False]):
-        word = word.capitalize()
-        
-    return f"{word}{numbers}"
 
 def generate_strong_password():
     """Generate a stronger password with words, numbers, and special characters"""
