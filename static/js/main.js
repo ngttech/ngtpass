@@ -136,9 +136,31 @@ document.addEventListener('DOMContentLoaded', function() {
             strengthText.className = 'strength-text text-very-strong';
         }
         
-        // Update the strength meter
+        // Update the strength meter - explicitly set width as inline style
         strengthBar.className = `strength-bar ${strengthClass}`;
+        
+        // Force the width to be set directly as a style
+        if (strengthClass === 'strength-very-weak') {
+            strengthBar.style.width = '20%';
+        } else if (strengthClass === 'strength-weak') {
+            strengthBar.style.width = '40%';
+        } else if (strengthClass === 'strength-medium') {
+            strengthBar.style.width = '60%';
+        } else if (strengthClass === 'strength-strong') {
+            strengthBar.style.width = '80%';
+        } else if (strengthClass === 'strength-very-strong') {
+            strengthBar.style.width = '100%';
+        }
+        
         strengthText.textContent = `${strengthDescription} (Score: ${score}/100)`;
+        
+        // Log for debugging
+        console.log('Password evaluated:', {
+            score,
+            strengthClass,
+            width: strengthBar.style.width,
+            barElement: strengthBar
+        });
     }
     
     function resetStrengthMeter() {
@@ -259,6 +281,20 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Auto-generate a password when the page loads
     setTimeout(() => {
-        strongBtn.click();
-    }, 500);
+        console.log('Auto-generating password...');
+        try {
+            // Try to generate a new password
+            strongBtn.click();
+            
+            // If there's already a password displayed (e.g., from a previous session),
+            // evaluate it directly
+            const currentPassword = passwordResult.textContent;
+            if (currentPassword && currentPassword !== 'Click a button to generate a password!') {
+                console.log('Evaluating existing password:', currentPassword);
+                evaluatePasswordStrength(currentPassword);
+            }
+        } catch (error) {
+            console.error('Error auto-generating password:', error);
+        }
+    }, 1000);
 }); 
