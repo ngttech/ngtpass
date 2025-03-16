@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const strongBtn = document.getElementById('strong-btn');
     const passphraseBtn = document.getElementById('passphrase-btn');
     const manualEvaluateBtn = document.getElementById('manual-evaluate');
+    const testStrengthBarBtn = document.getElementById('test-strength-bar');
     
     // Strength meter elements
     const strengthBar = document.getElementById('strength-bar');
@@ -347,16 +348,120 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }, 1000);
     
+    // Add a direct test function to manually set the strength bar
+    function testStrengthBar() {
+        if (!strengthBar || !strengthText) {
+            alert('Strength meter elements not found!');
+            return;
+        }
+        
+        // Test each strength level
+        const levels = [
+            { class: 'strength-very-weak', width: '20%', text: 'Very Weak (Test)', textClass: 'text-very-weak' },
+            { class: 'strength-weak', width: '40%', text: 'Weak (Test)', textClass: 'text-weak' },
+            { class: 'strength-medium', width: '60%', text: 'Medium (Test)', textClass: 'text-medium' },
+            { class: 'strength-strong', width: '80%', text: 'Strong (Test)', textClass: 'text-strong' },
+            { class: 'strength-very-strong', width: '100%', text: 'Very Strong (Test)', textClass: 'text-very-strong' }
+        ];
+        
+        let currentLevel = 0;
+        
+        function showNextLevel() {
+            if (currentLevel >= levels.length) {
+                currentLevel = 0;
+            }
+            
+            const level = levels[currentLevel];
+            
+            // Reset classes
+            strengthBar.className = 'strength-bar';
+            strengthText.className = 'strength-text';
+            
+            // Set new classes and styles
+            strengthBar.className = `strength-bar ${level.class}`;
+            strengthBar.style.width = level.width;
+            strengthText.className = `strength-text ${level.textClass}`;
+            strengthText.textContent = level.text;
+            
+            // Force a repaint
+            strengthBar.style.display = 'none';
+            void strengthBar.offsetHeight;
+            strengthBar.style.display = 'block';
+            
+            currentLevel++;
+        }
+        
+        // Show first level immediately
+        showNextLevel();
+        
+        // Show remaining levels with a delay
+        const intervalId = setInterval(() => {
+            showNextLevel();
+            
+            // Stop after showing all levels
+            if (currentLevel >= levels.length) {
+                clearInterval(intervalId);
+                
+                // Reset to original state
+                setTimeout(() => {
+                    strengthBar.className = 'strength-bar';
+                    strengthBar.style.width = '0';
+                    strengthText.className = 'strength-text';
+                    strengthText.textContent = 'Not evaluated';
+                }, 1000);
+            }
+        }, 1000);
+    }
+    
     // Add event listener for manual evaluation button
     if (manualEvaluateBtn) {
         manualEvaluateBtn.addEventListener('click', function() {
             const currentPassword = passwordResult.textContent;
+            
+            // Add an alert to confirm the button click is working
+            alert(`Attempting to evaluate: "${currentPassword}"\n\nCheck the browser console for detailed logs.`);
+            
             console.log('Manual evaluation triggered for:', currentPassword);
+            
+            // Check if strength meter elements exist
+            if (!strengthBar) {
+                alert('ERROR: Strength bar element not found in the DOM!');
+                console.error('Strength bar element not found');
+            }
+            
+            if (!strengthText) {
+                alert('ERROR: Strength text element not found in the DOM!');
+                console.error('Strength text element not found');
+            }
+            
             if (currentPassword && currentPassword !== 'Click a button to generate a password!') {
+                // Call the evaluation function
                 evaluatePasswordStrength(currentPassword);
+                
+                // Check if the strength bar has a width after evaluation
+                setTimeout(() => {
+                    const barWidth = strengthBar.style.width;
+                    const barClass = strengthBar.className;
+                    alert(`Evaluation complete!\n\nStrength bar width: ${barWidth}\nStrength bar class: ${barClass}\n\nIf width is "0" or empty, this is a display issue.`);
+                    
+                    // If evaluation didn't work, try the direct test
+                    if (!barWidth || barWidth === '0' || barWidth === '0px') {
+                        if (confirm('Strength bar not displaying. Run visual test?')) {
+                            testStrengthBar();
+                        }
+                    }
+                }, 200);
             } else {
                 alert('Please generate a password first');
             }
+        });
+    }
+    
+    // Add event listener for test button
+    if (testStrengthBarBtn) {
+        testStrengthBarBtn.addEventListener('click', function() {
+            alert('Running visual test of the strength meter...');
+            testStrengthBar();
         });
     }
 }); 
