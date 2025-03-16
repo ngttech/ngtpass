@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const copyButton = document.getElementById('copy-button');
     const strongBtn = document.getElementById('strong-btn');
     const passphraseBtn = document.getElementById('passphrase-btn');
-    const manualEvaluateBtn = document.getElementById('manual-evaluate');
     
     // Strength meter elements
     const strengthBar = document.getElementById('strength-bar');
@@ -338,20 +337,4 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error auto-generating password:', error);
         }
     }, 1000);
-    
-    // Add event listener for manual evaluation button
-    if (manualEvaluateBtn) {
-        manualEvaluateBtn.addEventListener('click', function() {
-            const currentPassword = passwordResult.textContent;
-            
-            console.log('Manual evaluation triggered for:', currentPassword);
-            
-            if (currentPassword && currentPassword !== 'Click a button to generate a password!') {
-                // Call the evaluation function
-                evaluatePasswordStrength(currentPassword);
-            } else {
-                alert('Please generate a password first');
-            }
-        });
-    }
 }); 
