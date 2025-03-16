@@ -313,4 +313,88 @@ footer {
     .company-logo {
         height: 50px;
     }
+}
+
+/* Password Strength Meter */
+.strength-meter-container {
+    background-color: white;
+    border-radius: 15px;
+    padding: 15px 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.strength-meter-label {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    color: #292a27;
+    font-weight: bold;
+}
+
+.strength-meter {
+    height: 10px;
+    background-color: #e0e0e0;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+
+.strength-bar {
+    height: 100%;
+    width: 0;
+    border-radius: 5px;
+    transition: width 0.5s ease, background-color 0.5s ease;
+}
+
+.strength-text {
+    font-size: 1rem;
+    font-weight: bold;
+    transition: color 0.5s ease;
+}
+
+/* Strength levels */
+.strength-very-weak {
+    background-color: #ff4d4d;
+    width: 20%;
+}
+
+.strength-weak {
+    background-color: #ffa64d;
+    width: 40%;
+}
+
+.strength-medium {
+    background-color: #ffff4d;
+    width: 60%;
+}
+
+.strength-strong {
+    background-color: #4dff4d;
+    width: 80%;
+}
+
+.strength-very-strong {
+    background-color: #4d4dff;
+    width: 100%;
+}
+
+.text-very-weak {
+    color: #ff4d4d;
+}
+
+.text-weak {
+    color: #ffa64d;
+}
+
+.text-medium {
+    color: #b3b300;
+}
+
+.text-strong {
+    color: #00b300;
+}
+
+.text-very-strong {
+    color: #0000b3;
 } 

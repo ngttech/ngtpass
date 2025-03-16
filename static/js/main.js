@@ -5,6 +5,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const strongBtn = document.getElementById('strong-btn');
     const passphraseBtn = document.getElementById('passphrase-btn');
     
+    // Strength meter elements
+    const strengthBar = document.getElementById('strength-bar');
+    const strengthText = document.getElementById('strength-text');
+    
     // Configuration elements
     const strongMinLength = document.getElementById('strong-min-length');
     const strongMinLengthValue = document.getElementById('strong-min-length-value');
@@ -30,10 +34,12 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 passwordResult.textContent = data.password;
                 animatePasswordDisplay();
+                evaluatePasswordStrength(data.password);
             })
             .catch(error => {
                 console.error('Error:', error);
                 passwordResult.textContent = 'Oops! Something went wrong.';
+                resetStrengthMeter();
             });
     });
     
@@ -55,12 +61,92 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 passwordResult.textContent = data.passphrase;
                 animatePasswordDisplay();
+                evaluatePasswordStrength(data.passphrase);
             })
             .catch(error => {
                 console.error('Error:', error);
                 passwordResult.textContent = 'Oops! Something went wrong.';
+                resetStrengthMeter();
             });
     });
+    
+    // Password Strength Evaluation
+    function evaluatePasswordStrength(password) {
+        // Reset classes
+        strengthBar.className = 'strength-bar';
+        strengthText.className = 'strength-text';
+        
+        if (!password || password === 'Click a button to generate a password!') {
+            resetStrengthMeter();
+            return;
+        }
+        
+        // Calculate score based on various factors
+        let score = 0;
+        
+        // Length factor (0-25 points)
+        const lengthFactor = Math.min(25, Math.floor(password.length * 2));
+        score += lengthFactor;
+        
+        // Character variety (0-25 points)
+        const hasLowercase = /[a-z]/.test(password);
+        const hasUppercase = /[A-Z]/.test(password);
+        const hasDigits = /\d/.test(password);
+        const hasSpecialChars = /[^a-zA-Z0-9]/.test(password);
+        
+        const varietyScore = (hasLowercase ? 6 : 0) + 
+                            (hasUppercase ? 6 : 0) + 
+                            (hasDigits ? 6 : 0) + 
+                            (hasSpecialChars ? 7 : 0);
+        score += varietyScore;
+        
+        // Word count for passphrases (0-25 points)
+        const wordCount = password.split(/[-._]/).length;
+        const wordCountScore = Math.min(25, wordCount * 8);
+        score += wordCountScore;
+        
+        // Substitutions (0-25 points)
+        const substitutionCount = (password.match(/[@3!0$71]/g) || []).length;
+        const substitutionScore = Math.min(25, substitutionCount * 5);
+        score += substitutionScore;
+        
+        // Determine strength level based on score
+        let strengthClass = '';
+        let strengthDescription = '';
+        
+        if (score < 40) {
+            strengthClass = 'strength-very-weak';
+            strengthDescription = 'Very Weak';
+            strengthText.className = 'strength-text text-very-weak';
+        } else if (score < 60) {
+            strengthClass = 'strength-weak';
+            strengthDescription = 'Weak';
+            strengthText.className = 'strength-text text-weak';
+        } else if (score < 80) {
+            strengthClass = 'strength-medium';
+            strengthDescription = 'Medium';
+            strengthText.className = 'strength-text text-medium';
+        } else if (score < 90) {
+            strengthClass = 'strength-strong';
+            strengthDescription = 'Strong';
+            strengthText.className = 'strength-text text-strong';
+        } else {
+            strengthClass = 'strength-very-strong';
+            strengthDescription = 'Very Strong';
+            strengthText.className = 'strength-text text-very-strong';
+        }
+        
+        // Update the strength meter
+        strengthBar.className = `strength-bar ${strengthClass}`;
+        strengthText.textContent = `${strengthDescription} (Score: ${score}/100)`;
+    }
+    
+    function resetStrengthMeter() {
+        strengthBar.className = 'strength-bar';
+        strengthBar.style.width = '0';
+        strengthText.className = 'strength-text';
+        strengthText.textContent = 'Not evaluated';
+    }
     
     // Copy to clipboard functionality
     copyButton.addEventListener('click', function() {
