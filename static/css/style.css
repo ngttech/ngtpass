@@ -340,6 +340,7 @@ footer {
     overflow: hidden;
     position: relative;
     width: 100%;
+    display: block; /* Ensure it's displayed as a block */
 }
 
 .strength-bar {
@@ -350,12 +351,22 @@ footer {
     position: absolute;
     left: 0;
     top: 0;
+    min-height: 10px; /* Ensure minimum height */
+    display: block; /* Ensure it's displayed */
 }
 
-.strength-text {
-    font-size: 1rem;
-    font-weight: bold;
-    transition: color 0.5s ease;
+/* Button for manual evaluation */
+.evaluate-btn {
+    background-color: #eb5e24; /* Orange */
+    color: white;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.evaluate-btn:hover {
+    background-color: #d04e18; /* Slightly darker orange */
 }
 
 /* Strength levels - these classes will be applied by JavaScript */
@@ -397,4 +408,10 @@ footer {
 
 .text-very-strong {
     color: #0000b3;
+}
+
+.strength-text {
+    font-size: 1rem;
+    font-weight: bold;
+    transition: color 0.5s ease;
 } 

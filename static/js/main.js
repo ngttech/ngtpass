@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const copyButton = document.getElementById('copy-button');
     const strongBtn = document.getElementById('strong-btn');
     const passphraseBtn = document.getElementById('passphrase-btn');
+    const manualEvaluateBtn = document.getElementById('manual-evaluate');
     
     // Strength meter elements
     const strengthBar = document.getElementById('strength-bar');
@@ -34,7 +35,19 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 passwordResult.textContent = data.password;
                 animatePasswordDisplay();
-                evaluatePasswordStrength(data.password);
+                
+                // Force immediate evaluation with delay to ensure DOM updates
+                setTimeout(() => {
+                    console.log('Forcing evaluation of password:', data.password);
+                    evaluatePasswordStrength(data.password);
+                    
+                    // Double-check if the strength bar is visible
+                    console.log('Strength bar after evaluation:', {
+                        width: strengthBar.style.width,
+                        className: strengthBar.className,
+                        visible: strengthBar.offsetWidth > 0
+                    });
+                }, 100);
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -61,7 +74,19 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 passwordResult.textContent = data.passphrase;
                 animatePasswordDisplay();
-                evaluatePasswordStrength(data.passphrase);
+                
+                // Force immediate evaluation with delay to ensure DOM updates
+                setTimeout(() => {
+                    console.log('Forcing evaluation of passphrase:', data.passphrase);
+                    evaluatePasswordStrength(data.passphrase);
+                    
+                    // Double-check if the strength bar is visible
+                    console.log('Strength bar after evaluation:', {
+                        width: strengthBar.style.width,
+                        className: strengthBar.className,
+                        visible: strengthBar.offsetWidth > 0
+                    });
+                }, 100);
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -72,6 +97,17 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Password Strength Evaluation
     function evaluatePasswordStrength(password) {
+        console.log('Starting strength evaluation for:', password);
+        
+        // Check if elements exist
+        if (!strengthBar || !strengthText) {
+            console.error('Strength meter elements not found:', {
+                strengthBar: !!strengthBar,
+                strengthText: !!strengthText
+            });
+            return;
+        }
+        
         // Reset classes
         strengthBar.className = 'strength-bar';
         strengthText.className = 'strength-text';
@@ -109,6 +145,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const substitutionCount = (password.match(/[@3!0$71]/g) || []).length;
         const substitutionScore = Math.min(25, substitutionCount * 5);
         score += substitutionScore;
+        
+        console.log('Password score calculation:', {
+            lengthFactor,
+            varietyScore,
+            wordCountScore,
+            substitutionScore,
+            totalScore: score
+        });
         
         // Determine strength level based on score
         let strengthClass = '';
@@ -155,12 +199,17 @@ document.addEventListener('DOMContentLoaded', function() {
         strengthText.textContent = `${strengthDescription} (Score: ${score}/100)`;
         
         // Log for debugging
-        console.log('Password evaluated:', {
+        console.log('Password evaluation complete:', {
             score,
             strengthClass,
             width: strengthBar.style.width,
             barElement: strengthBar
         });
+        
+        // Force a repaint of the strength bar
+        strengthBar.style.display = 'none';
+        void strengthBar.offsetHeight; // Trigger reflow
+        strengthBar.style.display = 'block';
     }
     
     function resetStrengthMeter() {
@@ -297,4 +346,17 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error auto-generating password:', error);
         }
     }, 1000);
+    
+    // Add event listener for manual evaluation button
+    if (manualEvaluateBtn) {
+        manualEvaluateBtn.addEventListener('click', function() {
+            const currentPassword = passwordResult.textContent;
+            console.log('Manual evaluation triggered for:', currentPassword);
+            if (currentPassword && currentPassword !== 'Click a button to generate a password!') {
+                evaluatePasswordStrength(currentPassword);
+            } else {
+                alert('Please generate a password first');
+            }
+        });
+    }
 }); 
