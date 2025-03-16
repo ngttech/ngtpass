@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const strongBtn = document.getElementById('strong-btn');
     const passphraseBtn = document.getElementById('passphrase-btn');
     const manualEvaluateBtn = document.getElementById('manual-evaluate');
-    const testStrengthBarBtn = document.getElementById('test-strength-bar');
     
     // Strength meter elements
     const strengthBar = document.getElementById('strength-bar');
@@ -45,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Double-check if the strength bar is visible
                     console.log('Strength bar after evaluation:', {
                         width: strengthBar.style.width,
-                        className: strengthBar.className,
+                        backgroundColor: strengthBar.style.backgroundColor,
                         visible: strengthBar.offsetWidth > 0
                     });
                 }, 100);
@@ -84,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Double-check if the strength bar is visible
                     console.log('Strength bar after evaluation:', {
                         width: strengthBar.style.width,
-                        className: strengthBar.className,
+                        backgroundColor: strengthBar.style.backgroundColor,
                         visible: strengthBar.offsetWidth > 0
                     });
                 }, 100);
@@ -156,67 +155,59 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         // Determine strength level based on score
-        let strengthClass = '';
+        let color = '';
         let strengthDescription = '';
+        let width = '';
         
         if (score < 40) {
-            strengthClass = 'strength-very-weak';
+            color = '#ff4d4d'; // Red
+            width = '20%';
             strengthDescription = 'Very Weak';
-            strengthText.className = 'strength-text text-very-weak';
+            strengthText.style.color = color;
         } else if (score < 60) {
-            strengthClass = 'strength-weak';
+            color = '#ffa64d'; // Orange
+            width = '40%';
             strengthDescription = 'Weak';
-            strengthText.className = 'strength-text text-weak';
+            strengthText.style.color = color;
         } else if (score < 80) {
-            strengthClass = 'strength-medium';
+            color = '#ffff4d'; // Yellow
+            width = '60%';
             strengthDescription = 'Medium';
-            strengthText.className = 'strength-text text-medium';
+            strengthText.style.color = color;
         } else if (score < 90) {
-            strengthClass = 'strength-strong';
+            color = '#4dff4d'; // Green
+            width = '80%';
             strengthDescription = 'Strong';
-            strengthText.className = 'strength-text text-strong';
+            strengthText.style.color = color;
         } else {
-            strengthClass = 'strength-very-strong';
+            color = '#4d4dff'; // Blue
+            width = '100%';
             strengthDescription = 'Very Strong';
-            strengthText.className = 'strength-text text-very-strong';
+            strengthText.style.color = color;
         }
         
-        // Update the strength meter - explicitly set width as inline style
-        strengthBar.className = `strength-bar ${strengthClass}`;
-        
-        // Force the width to be set directly as a style
-        if (strengthClass === 'strength-very-weak') {
-            strengthBar.style.width = '20%';
-        } else if (strengthClass === 'strength-weak') {
-            strengthBar.style.width = '40%';
-        } else if (strengthClass === 'strength-medium') {
-            strengthBar.style.width = '60%';
-        } else if (strengthClass === 'strength-strong') {
-            strengthBar.style.width = '80%';
-        } else if (strengthClass === 'strength-very-strong') {
-            strengthBar.style.width = '100%';
-        }
-        
+        // Update the strength meter - directly set styles
+        strengthBar.style.backgroundColor = color;
+        strengthBar.style.width = width;
         strengthText.textContent = `${strengthDescription} (Score: ${score}/100)`;
         
         // Log for debugging
         console.log('Password evaluation complete:', {
             score,
-            strengthClass,
-            width: strengthBar.style.width,
+            color,
+            width,
             barElement: strengthBar
         });
-        
-        // Force a repaint of the strength bar
-        strengthBar.style.display = 'none';
-        void strengthBar.offsetHeight; // Trigger reflow
-        strengthBar.style.display = 'block';
     }
     
     function resetStrengthMeter() {
-        strengthBar.className = 'strength-bar';
+        if (!strengthBar || !strengthText) {
+            return;
+        }
+        
         strengthBar.style.width = '0';
-        strengthText.className = 'strength-text';
+        strengthBar.style.backgroundColor = '';
+        strengthText.style.color = '';
         strengthText.textContent = 'Not evaluated';
     }
     
@@ -348,120 +339,19 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }, 1000);
     
-    // Add a direct test function to manually set the strength bar
-    function testStrengthBar() {
-        if (!strengthBar || !strengthText) {
-            alert('Strength meter elements not found!');
-            return;
-        }
-        
-        // Test each strength level
-        const levels = [
-            { class: 'strength-very-weak', width: '20%', text: 'Very Weak (Test)', textClass: 'text-very-weak' },
-            { class: 'strength-weak', width: '40%', text: 'Weak (Test)', textClass: 'text-weak' },
-            { class: 'strength-medium', width: '60%', text: 'Medium (Test)', textClass: 'text-medium' },
-            { class: 'strength-strong', width: '80%', text: 'Strong (Test)', textClass: 'text-strong' },
-            { class: 'strength-very-strong', width: '100%', text: 'Very Strong (Test)', textClass: 'text-very-strong' }
-        ];
-        
-        let currentLevel = 0;
-        
-        function showNextLevel() {
-            if (currentLevel >= levels.length) {
-                currentLevel = 0;
-            }
-            
-            const level = levels[currentLevel];
-            
-            // Reset classes
-            strengthBar.className = 'strength-bar';
-            strengthText.className = 'strength-text';
-            
-            // Set new classes and styles
-            strengthBar.className = `strength-bar ${level.class}`;
-            strengthBar.style.width = level.width;
-            strengthText.className = `strength-text ${level.textClass}`;
-            strengthText.textContent = level.text;
-            
-            // Force a repaint
-            strengthBar.style.display = 'none';
-            void strengthBar.offsetHeight;
-            strengthBar.style.display = 'block';
-            
-            currentLevel++;
-        }
-        
-        // Show first level immediately
-        showNextLevel();
-        
-        // Show remaining levels with a delay
-        const intervalId = setInterval(() => {
-            showNextLevel();
-            
-            // Stop after showing all levels
-            if (currentLevel >= levels.length) {
-                clearInterval(intervalId);
-                
-                // Reset to original state
-                setTimeout(() => {
-                    strengthBar.className = 'strength-bar';
-                    strengthBar.style.width = '0';
-                    strengthText.className = 'strength-text';
-                    strengthText.textContent = 'Not evaluated';
-                }, 1000);
-            }
-        }, 1000);
-    }
-    
     // Add event listener for manual evaluation button
     if (manualEvaluateBtn) {
         manualEvaluateBtn.addEventListener('click', function() {
             const currentPassword = passwordResult.textContent;
             
-            // Add an alert to confirm the button click is working
-            alert(`Attempting to evaluate: "${currentPassword}"\n\nCheck the browser console for detailed logs.`);
-            
             console.log('Manual evaluation triggered for:', currentPassword);
-            
-            // Check if strength meter elements exist
-            if (!strengthBar) {
-                alert('ERROR: Strength bar element not found in the DOM!');
-                console.error('Strength bar element not found');
-            }
-            
-            if (!strengthText) {
-                alert('ERROR: Strength text element not found in the DOM!');
-                console.error('Strength text element not found');
-            }
             
             if (currentPassword && currentPassword !== 'Click a button to generate a password!') {
                 // Call the evaluation function
                 evaluatePasswordStrength(currentPassword);
-                
-                // Check if the strength bar has a width after evaluation
-                setTimeout(() => {
-                    const barWidth = strengthBar.style.width;
-                    const barClass = strengthBar.className;
-                    alert(`Evaluation complete!\n\nStrength bar width: ${barWidth}\nStrength bar class: ${barClass}\n\nIf width is "0" or empty, this is a display issue.`);
-                    
-                    // If evaluation didn't work, try the direct test
-                    if (!barWidth || barWidth === '0' || barWidth === '0px') {
-                        if (confirm('Strength bar not displaying. Run visual test?')) {
-                            testStrengthBar();
-                        }
-                    }
-                }, 200);
             } else {
                 alert('Please generate a password first');
             }
-        });
-    }
-    
-    // Add event listener for test button
-    if (testStrengthBarBtn) {
-        testStrengthBarBtn.addEventListener('click', function() {
-            alert('Running visual test of the strength meter...');
-            testStrengthBar();
         });
     }
 }); 
